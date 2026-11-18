@@ -514,10 +514,10 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // Replace this default URL with your live Render or Vercel URL
-    const DEFAULT_API_URL = "https://student-management-backend.onrender.com";
+    // Automatically uses the live Render/Vercel URL where this page is hosted
+    const DEFAULT_API_URL = window.location.origin;
 
-    let apiBase = (localStorage.getItem("student_api_url") || DEFAULT_API_URL).replace(/\/+$/, "");
+    let apiBase = DEFAULT_API_URL.replace(/\/+$/, "");
     let students = [];
 
     const apiUrlInput = document.getElementById("apiUrlInput");
@@ -702,7 +702,6 @@
       const newUrl = apiUrlInput.value.trim().replace(/\/+$/, "");
       if (!newUrl) return;
       apiBase = newUrl;
-      localStorage.setItem("student_api_url", apiBase);
       fetchStudents();
     });
 
