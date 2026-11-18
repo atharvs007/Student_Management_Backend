@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Management Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: #eef2ff;
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --success: #10b981;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 20px 60px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* Top Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .api-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 8px 6px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      flex-shrink: 0;
+    }
+    .status-dot.online { background: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18); }
+    .status-dot.offline { background: var(--danger); }
+
+    .api-bar input {
+      border: none;
+      outline: none;
+      font-size: 13px;
+      width: 260px;
+      color: var(--text);
+      font-family: inherit;
+      background: transparent;
+    }
+
+    .api-bar button {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .api-bar button:hover { background: #e0e7ff; }
+
+    /* Stats Strip */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    /* Main Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      flex: 1;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-ghost {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .btn-ghost:hover { background: #e2e8f0; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+
+    .filter-select {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    /* Student List */
+    .student-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .student-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .student-item:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .student-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 15px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .student-meta {
+      min-width: 0;
+    }
+
+    .student-name {
+      font-weight: 600;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .student-email {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .student-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .age-pill {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      padding: 4px 8px;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+      transition: 0.15s;
+    }
+    .icon-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .icon-btn.delete { color: var(--danger); border-color: #fecaca; }
+    .icon-btn.delete:hover { background: var(--danger-soft); }
+
+    .empty-state {
+      text-align: center;
+      padding: 44px 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: #0f172a;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 0.25s;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: var(--danger); }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      .api-bar input { width: 180px; }
+      .student-item { flex-direction: column; align-items: flex-start; }
+      .student-right { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">SM</div>
+        <div>
+          <h1>Student Directory</h1>
+          <p>Live CRUD connected to MongoDB Atlas</p>
+        </div>
+      </div>
+
+      <div class="api-bar">
+        <span class="status-dot" id="statusDot" title="API Status"></span>
+        <input type="url" id="apiUrlInput" placeholder="https://your-app.onrender.com" />
+        <button id="connectBtn">Connect</button>
+      </div>
+    </header>
+
+    <!-- Stats Strip -->
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Courses</div>
+        <div class="stat-value" id="statCourses">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Age</div>
+        <div class="stat-value" id="statAvgAge">0</div>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="grid">
+      <!-- Form Card -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title" id="formTitle">Add New Student</h2>
+        </div>
+
+        <form id="studentForm">
+          <input type="hidden" id="studentId" />
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="e.g. Atharv Shinde" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="e.g. atharv@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="course">Course</label>
+            <input type="text" id="course" placeholder="e.g. MCA" required />
+          </div>
+
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" min="15" max="80" placeholder="e.g. 22" required />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Add Student</button>
+            <button type="button" class="btn btn-ghost" id="cancelBtn" style="display:none;">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Directory Card -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Registered Students</h2>
+          <button class="icon-btn" id="refreshBtn">Refresh</button>
+        </div>
+
+        <div class="toolbar">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search by name or email..." />
+          <select class="filter-select" id="courseFilter">
+            <option value="ALL">All Courses</option>
+          </select>
+        </div>
+
+        <div class="student-list" id="studentList">
+          <div class="empty-state">Connecting to backend...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Replace this default URL with your live Render or Vercel URL
+    const DEFAULT_API_URL = "https://student-management-backend.onrender.com";
+
+    let apiBase = (localStorage.getItem("student_api_url") || DEFAULT_API_URL).replace(/\/+$/, "");
+    let students = [];
+
+    const apiUrlInput = document.getElementById("apiUrlInput");
+    const statusDot = document.getElementById("statusDot");
+    const studentForm = document.getElementById("studentForm");
+    const studentList = document.getElementById("studentList");
+    const searchInput = document.getElementById("searchInput");
+    const courseFilter = document.getElementById("courseFilter");
+    const formTitle = document.getElementById("formTitle");
+    const submitBtn = document.getElementById("submitBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    apiUrlInput.value = apiBase;
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = `toast show ${isError ? "error" : ""}`;
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    function getInitials(name) {
+      return name
+        .trim()
+        .split(/\s+/)
+        .map(w => w[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+    }
+
+    function updateStats() {
+      document.getElementById("statTotal").textContent = students.length;
+      const uniqueCourses = new Set(students.map(s => s.course.trim().toUpperCase()));
+      document.getElementById("statCourses").textContent = uniqueCourses.size;
+
+      const avg = students.length
+        ? (students.reduce((sum, s) => sum + Number(s.age || 0), 0) / students.length).toFixed(1)
+        : 0;
+      document.getElementById("statAvgAge").textContent = avg;
+
+      const currentFilter = courseFilter.value;
+      courseFilter.innerHTML = `<option value="ALL">All Courses</option>` +
+        [...uniqueCourses].sort().map(c => `<option value="${c}">${c}</option>`).join("");
+      if ([...uniqueCourses].includes(currentFilter)) courseFilter.value = currentFilter;
+    }
+
+    function renderStudents() {
+      const query = searchInput.value.trim().toLowerCase();
+      const selectedCourse = courseFilter.value;
+
+      const filtered = students.filter(s => {
+        const matchesQuery =
+          s.name.toLowerCase().includes(query) ||
+          s.email.toLowerCase().includes(query);
+        const matchesCourse =
+          selectedCourse === "ALL" ||
+          s.course.trim().toUpperCase() === selectedCourse;
+        return matchesQuery && matchesCourse;
+      });
+
+      if (!filtered.length) {
+        studentList.innerHTML = `<div class="empty-state">No students found. Add one using the form on the left.</div>`;
+        return;
+      }
+
+      studentList.innerHTML = filtered.map(s => `
+        <div class="student-item">
+          <div class="student-left">
+            <div class="avatar">${getInitials(s.name)}</div>
+            <div class="student-meta">
+              <div class="student-name">${s.name}</div>
+              <div class="student-email">${s.email}</div>
+            </div>
+          </div>
+          <div class="student-right">
+            <span class="badge">${s.course}</span>
+            <span class="age-pill">${s.age} yrs</span>
+            <button class="icon-btn" onclick="startEdit('${s._id}')">Edit</button>
+            <button class="icon-btn delete" onclick="deleteStudent('${s._id}')">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function fetchStudents() {
+      studentList.innerHTML = `<div class="empty-state">Loading students...</div>`;
+      try {
+        const res = await fetch(`${apiBase}/api/students`);
+        if (!res.ok) throw new Error("Failed to fetch students");
+        students = await res.json();
+        statusDot.className = "status-dot online";
+        updateStats();
+        renderStudents();
+      } catch (err) {
+        statusDot.className = "status-dot offline";
+        studentList.innerHTML = `<div class="empty-state">Could not reach <strong>${apiBase}</strong>.<br/>Check the URL above and click Connect.</div>`;
+        showToast("Unable to connect to backend API", true);
+      }
+    }
+
+    studentForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("studentId").value;
+      const payload = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        course: document.getElementById("course").value.trim(),
+        age: Number(document.getElementById("age").value)
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = id ? "Updating..." : "Saving...";
+
+      try {
+        const url = id ? `${apiBase}/api/students/${id}` : `${apiBase}/api/students`;
+        const method = id ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || "Operation failed");
+
+        showToast(id ? "Student updated successfully" : "Student added successfully");
+        resetForm();
+        await fetchStudents();
+      } catch (err) {
+        showToast(err.message, true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = document.getElementById("studentId").value ? "Update Student" : "Add Student";
+      }
+    });
+
+    window.startEdit = function (id) {
+      const student = students.find(s => s._id === id);
+      if (!student) return;
+
+      document.getElementById("studentId").value = student._id;
+      document.getElementById("name").value = student.name;
+      document.getElementById("email").value = student.email;
+      document.getElementById("course").value = student.course;
+      document.getElementById("age").value = student.age;
+
+      formTitle.textContent = "Edit Student";
+      submitBtn.textContent = "Update Student";
+      cancelBtn.style.display = "inline-flex";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.deleteStudent = async function (id) {
+      if (!confirm("Delete this student record?")) return;
+      try {
+        const res = await fetch(`${apiBase}/api/students/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Delete failed");
+        showToast("Student deleted");
+        if (document.getElementById("studentId").value === id) resetForm();
+        await fetchStudents();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    };
+
+    function resetForm() {
+      studentForm.reset();
+      document.getElementById("studentId").value = "";
+      formTitle.textContent = "Add New Student";
+      submitBtn.textContent = "Add Student";
+      cancelBtn.style.display = "none";
+    }
+
+    cancelBtn.addEventListener("click", resetForm);
+    searchInput.addEventListener("input", renderStudents);
+    courseFilter.addEventListener("change", renderStudents);
+    document.getElementById("refreshBtn").addEventListener("click", fetchStudents);
+
+    document.getElementById("connectBtn").addEventListener("click", () => {
+      const newUrl = apiUrlInput.value.trim().replace(/\/+$/, "");
+      if (!newUrl) return;
+      apiBase = newUrl;
+      localStorage.setItem("student_api_url", apiBase);
+      fetchStudents();
+    });
+
+    fetchStudents();
+  </script>
+</body>
+</html>

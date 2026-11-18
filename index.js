@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const Student = require('./models/studentModel');
 
 const app = express();
@@ -10,12 +11,14 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 2. Connect the application with MongoDB (Using Atlas for cloud)
+// Serve static frontend files from the "public" folder
+app.use(express.static(path.join(__dirname, 'index.html')));
+
+// Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// 1. Create REST APIs for Student CRUD operations
 // CREATE Student
 app.post('/api/students', async (req, res) => {
     try {
@@ -49,9 +52,9 @@ app.delete('/api/students/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Root Route for testing deployment
+// Serve index.html on the root route
 app.get('/', (req, res) => {
-    res.send('Student Management Backend is Live!');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start Server (For Local & Render)
